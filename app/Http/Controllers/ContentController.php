@@ -17,6 +17,15 @@ class ContentController extends Controller
     {
         $contents = Content::query()
             ->with('user')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->validated('search');
+
+                $query->where(function ($query) use ($search) {
+                    $query
+                        ->where('title', 'like', "%{$search}%")
+                        ->orWhere('content', 'like', "%{$search}%");
+                });
+            })
             ->latest()
             ->paginate((int) $request->input('per_page', 10));
 
