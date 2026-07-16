@@ -2,7 +2,18 @@
 
 ## Project Overview
 
-Backend API untuk Take Home Test Fullstack Adhivasindo. Project ini menyediakan JWT authentication dan Content Management API dengan fitur register, login, create content, detail content, list/search/pagination, update, delete, dan ownership authorization.
+Backend API untuk Take Home Test Fullstack Adhivasindo. Project ini menyediakan JWT authentication dan Content Management API untuk kebutuhan aplikasi LMS frontend.
+
+## Features
+
+- Register user.
+- Login menggunakan JWT.
+- Protected content API.
+- List content dengan search dan pagination.
+- Create, detail, update, dan delete content.
+- Ownership authorization untuk update dan delete.
+- API documentation menggunakan Scribe.
+- Dokumentasi database menggunakan Mermaid ERD dan table specification.
 
 ## Tech Stack
 
@@ -52,14 +63,35 @@ JWT_SECRET=
 JWT_ALGO=HS256
 ```
 
-Generate `APP_KEY` dan `JWT_SECRET` dengan:
+## JWT Setup
+
+Generate `JWT_SECRET` setelah `.env` dibuat:
 
 ```bash
-php artisan key:generate
 php artisan jwt:secret
 ```
 
-## API Documentation
+Gunakan token dari `/api/login` pada protected endpoint:
+
+```http
+Authorization: Bearer jwt-token
+```
+
+## Database Migration
+
+Jalankan migration:
+
+```bash
+php artisan migrate
+```
+
+Fresh migration untuk QA:
+
+```bash
+php artisan migrate:fresh
+```
+
+## Generate API Docs
 
 Dokumentasi API dibuat menggunakan Scribe.
 
@@ -109,12 +141,6 @@ Route check:
 
 ```bash
 php artisan route:list
-```
-
-Fresh migration check:
-
-```bash
-php artisan migrate:fresh
 ```
 
 ## Folder Structure
@@ -167,12 +193,6 @@ Content:
 | GET | `/api/contents/{id}` | JWT | Get content detail. |
 | PUT | `/api/contents/{id}` | JWT | Update owned content. |
 | DELETE | `/api/contents/{id}` | JWT | Delete owned content. |
-
-Use JWT token on protected endpoints:
-
-```http
-Authorization: Bearer jwt-token
-```
 
 ## Database Documentation
 
