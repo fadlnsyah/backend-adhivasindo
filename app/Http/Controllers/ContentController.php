@@ -29,4 +29,18 @@ class ContentController extends Controller
             201
         );
     }
+
+    public function show(int $id): JsonResponse
+    {
+        $content = Content::with('user')->find($id);
+
+        if (! $content) {
+            return $this->errorResponse('Content not found', null, 404);
+        }
+
+        return $this->successResponse(
+            new ContentResource($content),
+            'Content retrieved successfully'
+        );
+    }
 }
