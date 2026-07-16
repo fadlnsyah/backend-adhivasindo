@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Content\IndexContentRequest;
 use App\Http\Requests\Content\StoreContentRequest;
+use App\Http\Requests\Content\UpdateContentRequest;
 use App\Http\Resources\ContentResource;
 use App\Models\Content;
 use App\Traits\ApiResponse;
@@ -71,6 +72,30 @@ class ContentController extends Controller
         return $this->successResponse(
             new ContentResource($content),
             'Content retrieved successfully'
+        );
+    }
+
+    public function update(UpdateContentRequest $request, int $id): JsonResponse
+    {
+        $content = Content::with('user')->find($id);
+
+        if (! $content) {
+            return $this->errorResponse('Content not found', null, 404);
+        }
+
+        if ($content->user_id !== $request->user()->id) {
+            return $this->errorResponse('Forbidden', null, 403);
+        }
+
+        $content->update([
+            'title' => $request->validated('title'),
+            'content' => $request->validated('content'),
+            'image' => $request->validated('image'),
+        ]);
+
+        return $this->successResponse(
+            new ContentResource($content->refresh()->load('user')),
+            'Content updated successfully'
         );
     }
 }
