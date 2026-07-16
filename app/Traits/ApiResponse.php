@@ -9,13 +9,20 @@ trait ApiResponse
     public function successResponse(
         mixed $data = null,
         string $message = 'Success',
-        int $status = 200
+        int $status = 200,
+        mixed $meta = null
     ): JsonResponse {
-        return response()->json([
+        $response = [
             'success' => true,
             'message' => $message,
             'data' => $data,
-        ], $status);
+        ];
+
+        if ($meta !== null) {
+            $response['meta'] = $meta;
+        }
+
+        return response()->json($response, $status);
     }
 
     public function errorResponse(
