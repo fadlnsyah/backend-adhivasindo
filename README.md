@@ -1,14 +1,19 @@
 # Backend Adhivasindo
 
-Backend API untuk Take Home Test Fullstack Adhivasindo menggunakan Laravel 12, MySQL, dan JWT authentication.
+## Project Overview
 
-## Requirements
+Backend API untuk Take Home Test Fullstack Adhivasindo. Project ini menyediakan JWT authentication dan Content Management API dengan fitur register, login, create content, detail content, list/search/pagination, update, delete, dan ownership authorization.
 
-- PHP 8.2 atau lebih baru
-- Composer
+## Tech Stack
+
+- PHP 8.2+
+- Laravel 12
 - MySQL
+- JWT Authentication (`php-open-source-saver/jwt-auth`)
+- Scribe API Documentation (`knuckleswtf/scribe`)
+- Composer
 
-## Setup
+## Installation
 
 ```bash
 composer install
@@ -19,118 +24,151 @@ php artisan migrate
 php artisan serve
 ```
 
-Default database pada `.env.example`:
+Server lokal default:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Environment
+
+Contoh konfigurasi `.env`:
 
 ```env
+APP_NAME="Adhivasindo Fullstack"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=adhivasindo_fullstack
 DB_USERNAME=root
 DB_PASSWORD=
+
+JWT_SECRET=
+JWT_ALGO=HS256
 ```
 
-## Authentication API
+Generate `APP_KEY` dan `JWT_SECRET` dengan:
 
-Base URL lokal:
+```bash
+php artisan key:generate
+php artisan jwt:secret
+```
+
+## API Documentation
+
+Dokumentasi API dibuat menggunakan Scribe.
+
+Generate ulang dokumentasi:
+
+```bash
+php artisan scribe:generate
+```
+
+Akses dokumentasi setelah server berjalan:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Dokumentasi yang dihasilkan mencakup:
+
+- Register
+- Login
+- List Content
+- Create Content
+- Detail Content
+- Update Content
+- Delete Content
+
+## Testing
+
+Format code:
+
+```bash
+vendor/bin/pint
+```
+
+Run automated tests:
+
+```bash
+php artisan test
+```
+
+Security audit:
+
+```bash
+composer audit
+```
+
+Route check:
+
+```bash
+php artisan route:list
+```
+
+Fresh migration check:
+
+```bash
+php artisan migrate:fresh
+```
+
+## Folder Structure
+
+```text
+app/
+├── Http/
+│   ├── Controllers/      API controllers
+│   ├── Requests/         Form Request validation
+│   └── Resources/        API response resources
+├── Models/               Eloquent models
+└── Traits/               Shared API response helper
+
+database/
+├── factories/            Model factories for tests
+└── migrations/           Database schema
+
+docs/
+├── erd.md                Mermaid ERD
+└── table-specification.md
+
+routes/
+└── api.php               API route definitions
+
+tests/
+└── Feature/              Feature tests
+```
+
+## API Endpoints
+
+Base URL:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-### Register
+Authentication:
 
-Endpoint:
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/register` | No | Register new user. |
+| POST | `/api/login` | No | Login and receive JWT token. |
 
-```http
-POST /api/register
-```
+Content:
 
-Request:
+| Method | Endpoint | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/contents` | JWT | List contents with search and pagination. |
+| POST | `/api/contents` | JWT | Create content. |
+| GET | `/api/contents/{id}` | JWT | Get content detail. |
+| PUT | `/api/contents/{id}` | JWT | Update owned content. |
+| DELETE | `/api/contents/{id}` | JWT | Delete owned content. |
 
-```json
-{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "password": "password123"
-}
-```
-
-Success response:
-
-```json
-{
-    "success": true,
-    "message": "User registered successfully",
-    "data": {
-        "id": 1,
-        "name": "John Doe",
-        "email": "john@example.com",
-        "created_at": "2026-07-16T06:00:00.000000Z",
-        "updated_at": "2026-07-16T06:00:00.000000Z"
-    }
-}
-```
-
-### Login
-
-Endpoint:
-
-```http
-POST /api/login
-```
-
-Request:
-
-```json
-{
-    "email": "john@example.com",
-    "password": "password123"
-}
-```
-
-Success response:
-
-```json
-{
-    "success": true,
-    "message": "Login successful",
-    "data": {
-        "token": "jwt-token",
-        "token_type": "bearer",
-        "user": {
-            "id": 1,
-            "name": "John Doe",
-            "email": "john@example.com",
-            "created_at": "2026-07-16T06:00:00.000000Z",
-            "updated_at": "2026-07-16T06:00:00.000000Z"
-        }
-    }
-}
-```
-
-Invalid credentials response:
-
-```json
-{
-    "success": false,
-    "message": "Invalid credentials"
-}
-```
-
-Validation error response:
-
-```json
-{
-    "success": false,
-    "message": "Validation Error",
-    "errors": {}
-}
-```
-
-## Using JWT Token
-
-For protected endpoints in future sprints, send the token from the login response in the `Authorization` header:
+Use JWT token on protected endpoints:
 
 ```http
 Authorization: Bearer jwt-token
@@ -140,3 +178,7 @@ Authorization: Bearer jwt-token
 
 - [ERD](docs/erd.md)
 - [Table Specification](docs/table-specification.md)
+
+## Author
+
+Fadlan Syah
