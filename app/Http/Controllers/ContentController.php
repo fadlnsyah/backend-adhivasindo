@@ -9,6 +9,7 @@ use App\Http\Resources\ContentResource;
 use App\Models\Content;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ContentController extends Controller
 {
@@ -96,6 +97,26 @@ class ContentController extends Controller
         return $this->successResponse(
             new ContentResource($content->refresh()->load('user')),
             'Content updated successfully'
+        );
+    }
+
+    public function destroy(Request $request, int $id): JsonResponse
+    {
+        $content = Content::find($id);
+
+        if (! $content) {
+            return $this->errorResponse('Content not found', null, 404);
+        }
+
+        if ($content->user_id !== $request->user()->id) {
+            return $this->errorResponse('Forbidden', null, 403);
+        }
+
+        $content->delete();
+
+        return $this->successResponse(
+            null,
+            'Content deleted successfully'
         );
     }
 }

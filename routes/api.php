@@ -12,4 +12,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/contents', [ContentController::class, 'store']);
     Route::get('/contents/{id}', [ContentController::class, 'show']);
     Route::put('/contents/{id}', [ContentController::class, 'update']);
+    Route::delete('/contents/{id}', [ContentController::class, 'destroy']);
 });
